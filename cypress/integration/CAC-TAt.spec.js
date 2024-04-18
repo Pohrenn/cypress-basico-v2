@@ -155,9 +155,11 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.get('#privacy a')
           .invoke('removeAttr', 'target')
           .click()
-          
+          erro aqui
         cy.contains('Talking About Testing').should('be.visible')  
         })
+
+    
 
     })
 
