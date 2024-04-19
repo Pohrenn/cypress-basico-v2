@@ -151,17 +151,73 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.get('#privacy a').should('have.attr', 'target', '_blank')
                            
         })
-    it.only('acessa a página da política de privacidade removendo o target e então clicando no link', function() {
+
+
+    //Para usar a funcionalidade da biblioteca loadash .times, bastou apenas encapsular a função como abaixo
+    Cypress._.times(5, () => {
+    it('acessa a página da política de privacidade removendo o target e então clicando no link', function() {
         cy.get('#privacy a')
           .invoke('removeAttr', 'target')
           .click()
-          erro aqui
+       
         cy.contains('Talking About Testing').should('be.visible')  
         })
-
+    })
     
+    it('exibe e esconde as mensagens de sucesso e erro usando o .invoke', () => {
+        cy.get('.success')
+          .should('not.be.visible')
+          .invoke('show')
+          .should('be.visible')
+          .and('contain', 'Mensagem enviada com sucesso.')
+          .invoke('hide')
+          .should('not.be.visible')
+        cy.get('.error')
+          .should('not.be.visible')
+          .invoke('show')
+          .should('be.visible')
+          .and('contain', 'Valide os campos obrigatórios!')
+          .invoke('hide')
+          .should('not.be.visible')
+      })
+
+    it('preenche a area de texto usando o comando invoke', () => {
+        const longText = Cypress._.repeat('Teste', 50)
+        
+        cy.get('#open-text-area')
+        .invoke('val', longText) 
+        .should('have.value', longText)
 
     })
 
+    it('faz uma requisição HTTP', () => {
+        cy.request({
+          method: 'GET',
+          url: 'https://cac-tat.s3.eu-central-1.amazonaws.com/index.html'
+        }).then((response) => {
+            expect(response.status).to.eq(200);
+            // Verifica se o statusText da resposta é 'OK'
+            expect(response.statusText).to.eq('OK');
+            // Verifica se o corpo da resposta inclui a string 'CAC TAT'
+            expect(response.body).to.include('CAC TAT');
+        })
+      })
+  
+      // 2 possibilidade desestruturando o objeto response em JS
+
+      it.only('faz uma requisição HTTP', ( ) => {
+        cy.request('https://cac-tat.s3.eu-central-1.amazonaws.com/index.html')
+        .should((response) => {
+            const { status, statusText, body} = response
+            
+            expect(status).to.eq(200);
+            // Verifica se o statusText da resposta é 'OK'
+            expect(statusText).to.eq('OK');
+            // Verifica se o corpo da resposta inclui a string 'CAC TAT'
+            expect(body).to.include('CAC TAT');
+        })
+  })
+})
 
 
+  
